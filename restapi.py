@@ -136,7 +136,7 @@ def return_borrowing():
     # Calculate late fee
     delta = (datetime.strptime(returndate, "%Y-%m-%d").date() - borrowdate).days
     late_fee = max(0, delta - 10)
-
+    
     update_borrowing = "UPDATE borrowingrecords SET returndate='%s', late_fee=%s WHERE id=%s" % (
         returndate, late_fee, borrow_id)
     execute_update_query(mycon, update_borrowing)
