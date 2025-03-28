@@ -4,6 +4,7 @@ from flask import jsonify, request
 from sql import DBconnection, execute_read_query, execute_update_query
 import creds
 from datetime import datetime
+import hashlib  # for password hashing
 
 app = flask.Flask(__name__)
 app.config['DEBUG'] = True
@@ -58,16 +59,18 @@ def get_customers():
 @app.route('/api/customers', methods=['POST'])
 def add_customer():
     data = request.get_json()
+    hashed = hashlib.sha256(data['password'].encode()).hexdigest()
     sql = "INSERT INTO customers (firstname, lastname, email, passwordhash) VALUES ('%s', '%s', '%s', '%s')" % (
-        data['firstname'], data['lastname'], data['email'], data['password'])  # storing plain password
+        data['firstname'], data['lastname'], data['email'], hashed)
     execute_update_query(mycon, sql)
     return "Customer added successfully"
 
 @app.route('/api/customers', methods=['PUT'])
 def update_customer():
     data = request.get_json()
+    hashed = hashlib.sha256(data['password'].encode()).hexdigest()
     sql = "UPDATE customers SET firstname='%s', lastname='%s', email='%s', passwordhash='%s' WHERE id=%s" % (
-        data['firstname'], data['lastname'], data['email'], data['password'], data['id'])  # storing plain password
+        data['firstname'], data['lastname'], data['email'], hashed, data['id'])
     execute_update_query(mycon, sql)
     return "Customer updated successfully"
 
@@ -132,7 +135,6 @@ def return_borrowing():
 
     # Calculate late fee
     delta = (datetime.strptime(returndate, "%Y-%m-%d").date() - borrowdate).days
-
     late_fee = max(0, delta - 10)
 
     update_borrowing = "UPDATE borrowingrecords SET returndate='%s', late_fee=%s WHERE id=%s" % (
