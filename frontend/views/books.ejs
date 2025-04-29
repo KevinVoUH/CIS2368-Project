@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Books</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <h1>Books</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/customers">Customers</a>
+        <a href="/borrowings">Borrowings</a>
+    </nav>
+    <table>
+        <tr><th>Title</th><th>Author</th><th>Genre</th><th>Status</th></tr>
+        <% books.forEach(book => { %>
+            <tr>
+                <td><%= book.title %></td>
+                <td><%= book.author %></td>
+                <td><%= book.genre %></td>
+                <td><%= book.status %></td>
+            </tr>
+        <% }); %>
+    </table>
+</body>
+</html>
